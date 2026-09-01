@@ -8,13 +8,19 @@ the kit to the discrete-Blackwell lane and pins the build to sm120;
 everything that makes it work is Mia'a AI Lab's engineering. Upstream:
 [MiaAI-Lab/Qwen3.8-27B-DFlash2-EXL3-5.0bpw](https://github.com/MiaAI-Lab/Qwen3.8-27B-DFlash2-EXL3-5.0bpw), MIT.
 
-Measured on one RTX 5090 (32 GB, sm120), defaults as shipped (DFlash2 +
-nvfp4 KV, 262,144 context): 132-161 tok/s wall-clock on 500-token code
-generations (greedy and temp 0.6), 193 tok/s decode-only at draft
-acceptance 0.70 (from the server's own stats line), 25.4 GiB resident.
-Prefill on cache-cold prompts: 2,244 tok/s at 16K, 1,671 at 48K, 1,191 at
-96K (~81 s to first token). First run
-bootstrapped, compiled and downloaded unattended in under 25 minutes.
+## Measured on one RTX 5090
+
+Defaults as shipped (DFlash2 draft + nvfp4 KV, 262,144 context), 25.4 GiB
+resident, numbers from the server's own `[stats]` line, 2026-09-01:
+
+| metric | result |
+|---|---|
+| decode, 500-token code generations | **193 tok/s** (decode-only) |
+| same runs, wall-clock incl. prefill | 132-161 tok/s |
+| draft acceptance (DFlash2) | 0.70 |
+| prefill, cache-cold 16K prompt | **2,244 tok/s** |
+| prefill @48K / @96K | 1,671 / 1,191 tok/s (~81 s TTFT at 96K) |
+| first-run bootstrap (compile + weights) | under 25 minutes, unattended |
 
 ## Contents
 
