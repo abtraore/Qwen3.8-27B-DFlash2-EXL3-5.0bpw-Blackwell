@@ -1,8 +1,6 @@
 # Field notes: 32 GB Blackwell lane
 
-Everything below the measurement checklist is derived from upstream's
-published per-token costs, not yet verified on a 5090. Treat it as
-arithmetic until the checklist runs.
+The math below is derived from upstream's published per-token costs.
 
 ## Memory math at a 30 GB budget (32 GB card minus headroom)
 
@@ -18,19 +16,6 @@ fp16 is ~64 KB/token).
   required for full native context even at 32 GB.
 - The YaRN 1M config: ~19 GiB of nvfp4 KV + weights = ~34.6 GiB. Does not
   fit on one card, same conclusion as upstream's 24 GB notes.
-
-## What to measure first (the reason this repo exists)
-
-1. Decode tok/s, all three DRAFT modes, greedy and temp 0.6, code-shaped
-   prompts: upstream's Spark numbers are bandwidth-bound at ~273 GB/s and
-   a 5090 reads weights at ~1.8 TB/s, so the interesting question is how
-   much of the ~6x bandwidth gap survives the drafting pipeline.
-2. Acceptance per step (the server logs it): should match Spark since
-   acceptance is hardware-independent.
-3. TTFT and prefill at 32K / 100K / 200K: prefill on exllamav3 is
-   compute-bound, a different regime from the decode claim.
-4. nvfp4 KV spot-check on code generation at temp 0 vs fp16 KV, since the
-   "lossless at generation level" claim was measured upstream on Spark.
 
 ## Operational notes carried from upstream
 

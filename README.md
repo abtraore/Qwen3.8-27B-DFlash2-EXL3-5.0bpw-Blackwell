@@ -8,13 +8,6 @@ strips the kit to the discrete-Blackwell lane and pins the build to sm120;
 everything that makes it work is her engineering. Upstream:
 [MiaAI-Lab/Qwen3.8-27B-DFlash2-EXL3-5.0bpw](https://github.com/MiaAI-Lab/Qwen3.8-27B-DFlash2-EXL3-5.0bpw), MIT.
 
-Her measured numbers (DGX Spark, ~273 GB/s unified memory): 47.5 tok/s
-with DFlash2 at 4.43 tokens accepted per step; ~30 tok/s MTP / ~34.5
-DFlash2 on the 24 GB recipe. Decode is memory-bandwidth-bound at batch 1,
-so a 5090 (~1.8 TB/s) should land well above that. **Not yet measured on
-a 5090; this repo exists to do exactly that.** Numbers land here when
-they come from a live run with these files.
-
 ## Contents
 
 - `launch.sh`: self-bootstrapping launcher (venv, sm120 engine compile,
@@ -25,7 +18,7 @@ they come from a live run with these files.
   streaming, tool calling), unmodified
 - `.env.example`: documented knobs, defaults set for a 32 GB card
   (DRAFT=dflash2, CACHE_QUANT=nvfp4, 262,144 context)
-- `NOTES.md`: the 32 GB memory math and what to measure first
+- `NOTES.md`: the 32 GB memory math and operational notes
 
 ## Quick start
 
