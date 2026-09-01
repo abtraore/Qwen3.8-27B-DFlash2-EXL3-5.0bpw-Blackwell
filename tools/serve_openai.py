@@ -39,6 +39,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from aiohttp import web
 
 MODEL_DIR = "test_models/Qwen3.8-27B-exl3-3.5bpw-wm"
+SERVED_NAME = os.environ.get("SERVED_NAME", "qwen3.8-27b-exl3-3.5bpw-wm")
 DRAFT_DIR = "mtp"   # default drafting method: MTP head (no external draft model)
 PORT = 8888
 
@@ -378,7 +379,7 @@ def generate_full(generator, tokenizer, messages, max_tokens, temperature,
 async def models(request):
     ctx = stats.get("context_length")
     return web.json_response({"object": "list", "data": [{
-        "id": "qwen3.8-27b-exl3-3.5bpw-wm",
+        "id": SERVED_NAME,
         "object": "model",
         "owned_by": "exl3",
         **({"max_model_len": ctx} if ctx else {}),
@@ -422,7 +423,7 @@ def parse_request(body):
         tool_choice = body.get("tool_choice"),
         stop = stop,
         stream = bool(body.get("stream", False)),
-        model_id = body.get("model", "qwen3.8-27b-exl3-3.5bpw-wm"),
+        model_id = body.get("model", SERVED_NAME),
     ), None
 
 

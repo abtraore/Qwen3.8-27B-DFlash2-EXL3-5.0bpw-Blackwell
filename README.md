@@ -11,7 +11,9 @@ everything that makes it work is Mia'a AI Lab's engineering. Upstream:
 Measured on one RTX 5090 (32 GB, sm120), defaults as shipped (DFlash2 +
 nvfp4 KV, 262,144 context): 132-161 tok/s wall-clock on 500-token code
 generations (greedy and temp 0.6), 193 tok/s decode-only at draft
-acceptance 0.70 (from the server's own stats line), 25.4 GiB resident. First run
+acceptance 0.70 (from the server's own stats line), 25.4 GiB resident.
+Prefill on cache-cold prompts: 2,244 tok/s at 16K, 1,671 at 48K, 1,191 at
+96K (~81 s to first token). First run
 bootstrapped, compiled and downloaded unattended in under 25 minutes.
 
 ## Contents
