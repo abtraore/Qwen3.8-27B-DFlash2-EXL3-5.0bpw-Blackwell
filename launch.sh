@@ -29,6 +29,7 @@ source .env
 # token in its environment, so export it if set.
 if [ -n "${HF_TOKEN:-}" ]; then export HF_TOKEN; fi
 if [ -n "${SERVED_NAME:-}" ]; then export SERVED_NAME; fi
+if [ -n "${DYNAMIC_DRAFT:-}" ]; then export DYNAMIC_DRAFT; fi
 
 # --- bootstrap: build the venv + install the engine on first run ----------
 # Re-enters if the venv is missing OR the install is incomplete (e.g. a

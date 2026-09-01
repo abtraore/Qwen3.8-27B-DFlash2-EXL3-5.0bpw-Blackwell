@@ -106,6 +106,19 @@ def build_model(argv, use_draft = True):
             # num_draft_tokens defaults to the draft model's arch-declared
             # default_draft_size (DFlash2: block_size - 1 = 7, MTP: 4). Must
             # match model_init's max_history sizing, which reads the same caps.
+            # Adaptive draft window (EMA-sized, skips drafting through
+            # unpredictable stretches): without it a fixed 7-token DFlash2
+            # block at ~0.3 acceptance turns the drafter into a tax,
+            # measured 28-32 tok/s at 91K depth on real agent traffic.
+            # DYNAMIC_DRAFT=0 restores the fixed window.
+            dynamic_draft_tokens = os.environ.get("DYNAMIC_DRAFT", "1") != "0",
+            # skip_ema 0 on purpose: the engine's 0.3 default parks new jobs in
+            # skip mode (probe every 16 rounds) and costs easy traffic more
+            # than half its speed (68 vs 160 tok/s measured); window
+            # adaptation alone keeps ~95% of fixed-window speed on code while
+            # drafting 2.6x fewer tokens on hard output.
+            dynamic_draft_skip_ema = float(os.environ.get("DYNAMIC_DRAFT_SKIP_EMA", "0")),
+            dynamic_draft_probe_interval = int(os.environ.get("DYNAMIC_DRAFT_PROBE", "16")),
         )
     else:
         model, config, cache, tokenizer = model_init.init(args, progress = True)

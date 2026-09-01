@@ -27,3 +27,22 @@ fp16 is ~64 KB/token).
   it in automatically when `CONTEXT_SIZE` asks for more.
 - First run compiles CUDA kernels for sm120 (5 to 20 minutes) and
   downloads ~15.6 GB of weights.
+
+## Draft window tuning (measured 2026-09-01, one 5090)
+
+Same two prompts per config: a greedy LRU-cache code prompt (easy) and a
+temp-0.8 surreal story (hard). Decode tok/s from the stats line, with
+acceptance and total drafted tokens in parentheses.
+
+| window config | code | story |
+|---|---|---|
+| fixed 7 (engine default) | 168.3 (0.553, 562 drafted) | 86.1 (0.171, 1,248 drafted) |
+| dynamic, skip_ema 0.3 | 68.4 (0.680) | 86.2 (0.452) |
+| dynamic, skip_ema 0 (server default) | 159.9 (0.731, 417 drafted) | 87.2 (0.422, 474 drafted) |
+
+- The engine's skip_ema 0.3 default parks fresh jobs in skip mode (probe
+  every 16 rounds), so easy traffic decodes mostly undrafted: avoid.
+- Fixed vs adaptive is a wash shallow, but the fixed window drafts 2.6x
+  more tokens on hard output, and each wasted verification round costs
+  attention over the whole context. On real 91K-deep agent traffic the
+  fixed window measured 28-32 tok/s at acceptance 0.17-0.32.
