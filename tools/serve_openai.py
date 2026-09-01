@@ -312,6 +312,7 @@ def generate_full(generator, tokenizer, messages, max_tokens, temperature,
                   stop_conditions = stop_conditions,
                   sampler = sampler, seed = seed)
         prefill_seen = 0
+        eos_r = {}
         with gen_lock:
             generator.enqueue(job)
             while generator.num_remaining_jobs():
@@ -330,8 +331,25 @@ def generate_full(generator, tokenizer, messages, max_tokens, temperature,
                             on_text(chunk)
                     if r.get("eos"):
                         reason = r.get("eos_reason", reason)
+                        eos_r = r
             if prefill_seen < prompt_toks:
                 _bump_stats(prompt=prompt_toks - prefill_seen)
+        # Per-request stats line: the engine's eos result carries decode-only
+        # timing and (with a drafter) the draft acceptance counters.
+        nt = int(eos_r.get("new_tokens") or 0)
+        tg = float(eos_r.get("time_generate") or 0.0)
+        tp = float(eos_r.get("time_prefill") or 0.0)
+        line = (f"[stats] prompt {prompt_toks} tok"
+                f" (cached {int(eos_r.get('cached_tokens') or 0)})"
+                f" | prefill {tp:.2f}s | gen {nt} tok in {tg:.2f}s")
+        if tg > 0:
+            line += f" = {nt / tg:.1f} tok/s"
+        acc = eos_r.get("accepted_draft_tokens")
+        if acc is not None:
+            total = int(acc) + int(eos_r.get("rejected_draft_tokens") or 0)
+            if total > 0:
+                line += f" | draft accepted {int(acc)}/{total} ({int(acc) / total:.3f})"
+        print(line, flush = True)
         return job
 
     job = run_once()

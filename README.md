@@ -10,7 +10,8 @@ everything that makes it work is Mia'a AI Lab's engineering. Upstream:
 
 Measured on one RTX 5090 (32 GB, sm120), defaults as shipped (DFlash2 +
 nvfp4 KV, 262,144 context): 132-161 tok/s wall-clock on 500-token code
-generations (greedy and temp 0.6), 25.4 GiB resident. First run
+generations (greedy and temp 0.6), 193 tok/s decode-only at draft
+acceptance 0.70 (from the server's own stats line), 25.4 GiB resident. First run
 bootstrapped, compiled and downloaded unattended in under 25 minutes.
 
 ## Contents
@@ -20,7 +21,9 @@ bootstrapped, compiled and downloaded unattended in under 25 minutes.
   Blackwell
 - `stop.sh`: graceful shutdown
 - `tools/serve_openai.py`: Mia'a AI Lab's OpenAI-compatible server (chat
-  completions, streaming, tool calling), unmodified
+  completions, streaming, tool calling), plus one addition here: a
+  per-request `[stats]` log line (cached tokens, prefill time, decode
+  tok/s, draft acceptance)
 - `.env.example`: documented knobs, defaults set for a 32 GB card
   (DRAFT=dflash2, CACHE_QUANT=nvfp4, 262,144 context)
 - `NOTES.md`: the 32 GB memory math and operational notes
