@@ -1,0 +1,8 @@
+.env
+.venv/
+models/
+# runtime: server conversation log
+jobs.jsonl
+# local agent notes stay out of the repo
+CLAUDE.md
+AGENTS.md
