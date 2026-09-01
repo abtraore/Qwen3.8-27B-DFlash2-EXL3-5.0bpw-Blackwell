@@ -8,6 +8,11 @@ the kit to the discrete-Blackwell lane and pins the build to sm120;
 everything that makes it work is Mia'a AI Lab's engineering. Upstream:
 [MiaAI-Lab/Qwen3.8-27B-DFlash2-EXL3-5.0bpw](https://github.com/MiaAI-Lab/Qwen3.8-27B-DFlash2-EXL3-5.0bpw), MIT.
 
+Measured on one RTX 5090 (32 GB, sm120), defaults as shipped (DFlash2 +
+nvfp4 KV, 262,144 context): 132-161 tok/s wall-clock on 500-token code
+generations (greedy and temp 0.6), 25.4 GiB resident. First run
+bootstrapped, compiled and downloaded unattended in under 25 minutes.
+
 ## Contents
 
 - `launch.sh`: self-bootstrapping launcher (venv, sm120 engine compile,
