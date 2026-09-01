@@ -339,9 +339,13 @@ def generate_full(generator, tokenizer, messages, max_tokens, temperature,
         nt = int(eos_r.get("new_tokens") or 0)
         tg = float(eos_r.get("time_generate") or 0.0)
         tp = float(eos_r.get("time_prefill") or 0.0)
+        cached = int(eos_r.get("cached_tokens") or 0)
         line = (f"[stats] prompt {prompt_toks} tok"
-                f" (cached {int(eos_r.get('cached_tokens') or 0)})"
-                f" | prefill {tp:.2f}s | gen {nt} tok in {tg:.2f}s")
+                f" (cached {cached})"
+                f" | prefill {tp:.2f}s")
+        if tp > 0 and prompt_toks > cached:
+            line += f" = {(prompt_toks - cached) / tp:.0f} tok/s"
+        line += f" | gen {nt} tok in {tg:.2f}s"
         if tg > 0:
             line += f" = {nt / tg:.1f} tok/s"
         acc = eos_r.get("accepted_draft_tokens")
